@@ -1,35 +1,76 @@
-import React from 'react'
-import './index.css'
+import React, { useState } from "react";
+import "./index.css";
 
 const App = () => {
+  const [newItem, setNewItem] = useState("");
+  const [todos, setTodos] = useState([]);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    // to make sure we dont refresh page each time we submit
+
+    const newTodo = {
+      id: crypto.randomUUID,
+      title: newItem,
+      completed: false,
+    };
+
+    setTodos((currentTodos) => currentTodos.concat(newTodo));
+    // calling set todos func
+  }
+
+  function toggleTodo(id,completed){
+    setTodos(currentTodos => {
+      currentTodos.map(todo => {
+        if(todo.id == id){
+          return 
+        }
+      })
+    })
+
+        /* if(todo.id == id){
+          if(todo.completed) todo.completed = false;
+          else todo.completed = true;
+          -- this is wrong cuz in react states are immutable and hence we rnt changing it
+          instead we're making a new state with completed as opposite
+        */
+       
+  }
+
   return (
     <>
-      <form className = "new-item-form">
-        <div className = "form-row">
+      <form onSubmit={handleSubmit} className="new-item-form">
+        <div className="form-row">
           <label htmlFor="item" /> Enter Task
-          <input type = "text" id="item" />
+          <input
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            type="text"
+            id="item"
+          />
         </div>
         <button className="btn"> Add </button>
       </form>
-      <h1 className='header'>To-Do List</h1>
-      <ul className = 'list'>
-        <li>
-          <label>
-            <input type="checkbox" />
-            item 1
-          </label>
-          <button className='btn btn-danger'> Danger </button>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" />
-            item 2
-          </label>
-          <button className='btn btn-danger'> Danger </button>
-        </li>
+      <h1 className="header">To-Do List</h1>
+      <ul className="list">
+        {todos.map((todo) => {
+          return (
+            <li key={todo.id}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={e => toggleTodo(todo.id, e.target.checked)}
+                />
+                {todo.title}
+              </label>
+              <button className="btn btn-danger"> Delete </button>
+            </li>
+          );
+        })}
       </ul>
     </>
-  )
-}
+  );
+};
 
 export default App;

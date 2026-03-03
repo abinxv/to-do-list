@@ -1,58 +1,51 @@
 import React, { useState } from "react";
 import "./index.css";
+import { NewTodoForm } from "./NewTodoForm";
 
 const App = () => {
-  const [newItem, setNewItem] = useState("");
   const [todos, setTodos] = useState([]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    // to make sure we dont refresh page each time we submit
-
-    const newTodo = {
-      id: crypto.randomUUID,
-      title: newItem,
-      completed: false,
-    };
-
-    setTodos((currentTodos) => currentTodos.concat(newTodo));
-    // calling set todos func
+  function addTodo(title) {
+    setTodos((currentTodos) => {
+      return [
+        ...currentTodos,
+        {
+          id: crypto.randomUUID(),
+          title: title,
+          completed: false,
+        },
+      ];
+    });
   }
 
-  function toggleTodo(id,completed){
-    setTodos(currentTodos => {
-      currentTodos.map(todo => {
-        if(todo.id == id){
-          return 
-        }
-      })
-    })
+  function toggleTodo(id, completed) {
+    setTodos((currentTodos) =>
+      currentTodos.map((todo) =>
+        todo.id === id ? { ...todo, completed: completed } : todo,
+      ),
+    );
+  }
 
-        /* if(todo.id == id){
+  /* if( id == id){
           if(todo.completed) todo.completed = false;
           else todo.completed = true;
           -- this is wrong cuz in react states are immutable and hence we rnt changing it
           instead we're making a new state with completed as opposite
         */
-       
+
+  function deleteTodo(id) {
+    setTodos((currentTodos) => {
+      currentTodos.filter((todo) => todo.id !== id);
+      // remove the todo which id is id
+    });
   }
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="new-item-form">
-        <div className="form-row">
-          <label htmlFor="item" /> Enter Task
-          <input
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            type="text"
-            id="item"
-          />
-        </div>
-        <button className="btn"> Add </button>
-      </form>
+      <NewTodoForm onSubmit={addTodo} />
       <h1 className="header">To-Do List</h1>
       <ul className="list">
+        {todos.length == 0 && "No todos"}
         {todos.map((todo) => {
           return (
             <li key={todo.id}>
@@ -60,11 +53,17 @@ const App = () => {
                 <input
                   type="checkbox"
                   checked={todo.completed}
-                  onChange={e => toggleTodo(todo.id, e.target.checked)}
+                  onChange={(e) => toggleTodo(todo.id, e.target.checked)}
                 />
                 {todo.title}
               </label>
-              <button className="btn btn-danger"> Delete </button>
+              <button
+                type = "button"
+                onClick={() => deleteTodo(todo.id)}
+                className="btn btn-danger"
+              >
+                Delete
+              </button>
             </li>
           );
         })}

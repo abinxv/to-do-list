@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./index.css";
 import { NewTodoForm } from "./NewTodoForm";
+import { ToDoList } from "./ToDoList";
 
 const App = () => {
   const [todos, setTodos] = useState([]);
@@ -35,7 +36,7 @@ const App = () => {
 
   function deleteTodo(id) {
     setTodos((currentTodos) => {
-      currentTodos.filter((todo) => todo.id !== id);
+      return currentTodos.filter((todo) => todo.id !== id);
       // remove the todo which id is id
     });
   }
@@ -44,30 +45,7 @@ const App = () => {
     <>
       <NewTodoForm onSubmit={addTodo} />
       <h1 className="header">To-Do List</h1>
-      <ul className="list">
-        {todos.length == 0 && "No todos"}
-        {todos.map((todo) => {
-          return (
-            <li key={todo.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={(e) => toggleTodo(todo.id, e.target.checked)}
-                />
-                {todo.title}
-              </label>
-              <button
-                type = "button"
-                onClick={() => deleteTodo(todo.id)}
-                className="btn btn-danger"
-              >
-                Delete
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <ToDoList todos = {todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/>
     </>
   );
 };
